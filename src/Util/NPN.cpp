@@ -202,7 +202,7 @@ namespace LLS1::Util
         {
             for (
                 uint64_t negation = 0;
-                negation < (1ULL << a.num_inputs) - 1;
+                negation < (1ULL << a.num_inputs);
                 ++negation
             ) {
                     
