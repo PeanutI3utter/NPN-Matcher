@@ -72,14 +72,14 @@ namespace LLS1::Types
     bool CompactBoolFunc::operator<(
         const CompactBoolFunc& other
     ) {
-        return getMaxSat() < other.getMaxSat();
+        return truth_table < other.truth_table;
     }
 
 
     bool CompactBoolFunc::operator>(
         const CompactBoolFunc& other
     ) {
-        return getMaxSat() > other.getMaxSat();
+        return truth_table > other.truth_table;
     }
 
 

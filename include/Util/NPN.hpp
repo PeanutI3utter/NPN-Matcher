@@ -21,6 +21,13 @@ namespace LLS1::Util
     class NPNChecker
     {
     public:
+        /*
+            Returns true when given functions are NPN equal
+        */
+        bool equal(
+            const CompactBoolFunc&, const CompactBoolFunc&
+        );
+
         int64_t elapsed_microseconds;
         int64_t transformations;
     };
@@ -33,12 +40,7 @@ namespace LLS1::Util
     public:
         FlipSwap(unsigned long long num_inputs) : func_manipulator{num_inputs} {};
 
-
-        /*
-            Returns the NPN tranformations needed to tranform
-            the given funcitons 
-        */
-        std::optional<std::pair<NPNTransformation, NPNTransformation>> equal(
+        bool equal(
             const CompactBoolFunc&, const CompactBoolFunc&
         );
 
@@ -46,7 +48,7 @@ namespace LLS1::Util
         /*
             Return the representant function of the given function
         */
-        NPNTransformation getRepresentant(
+        CompactBoolFunc getRepresentant(
             const CompactBoolFunc&
         );
 
@@ -63,20 +65,14 @@ namespace LLS1::Util
     public:
         Sifting(unsigned long long num_inputs) : func_manipulator{num_inputs} {};
 
-
-        /*
-            Returns the NPN tranformations needed to tranform
-            the given funcitons 
-        */
-        std::optional<std::pair<NPNTransformation, NPNTransformation>> equal(
+        bool equal(
             const CompactBoolFunc&, const CompactBoolFunc&
         );
-
 
         /*
             Return the representant function of the given function
         */
-        NPNTransformation getRepresentant(
+        CompactBoolFunc getRepresentant(
             const CompactBoolFunc&
         );
 
@@ -89,10 +85,8 @@ namespace LLS1::Util
     {
     public:
         Exhaustive(unsigned long long num_inputs) : func_manipulator{num_inputs} {};
-        /*
-            Implemenation of the singleton method
-        */
-        std::optional<NPNTransformation> equal(
+        
+        bool equal(
             const CompactBoolFunc&, const CompactBoolFunc&
         );
         

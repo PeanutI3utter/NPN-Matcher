@@ -65,7 +65,6 @@ namespace LLS1::Types
             ~(i_one_j_zero | i_zero_j_one) & function;
         result = result | (i_one_j_zero & function) << shift;
         result = result | (i_zero_j_one & function) >> shift;
-
         return result;
     }
 
@@ -83,11 +82,11 @@ namespace LLS1::Types
                 result = negateInput(result, i);
         }
 
-        if (transformation.negation[result.num_inputs])
-            result = ~result;
-
         for (int i = 0; i < function.num_inputs; ++i)
             result = swap(result, i, transformation.permutation[i]);
+
+        if (transformation.negation[result.num_inputs])
+            result = ~result;
 
         return result;
     }

@@ -3,7 +3,7 @@
 
 namespace LLS1::Util
 {
-    std::optional<std::pair<NPNTransformation, NPNTransformation>> FlipSwap::equal(
+    bool FlipSwap::equal(
         const CompactBoolFunc& a, const CompactBoolFunc& b
     ) {
         if (a.num_inputs != b.num_inputs)
@@ -14,23 +14,15 @@ namespace LLS1::Util
         
         transformations = 0;
 
-        NPNTransformation trans_repr_a = getRepresentant(a);
-        NPNTransformation trans_repr_b = getRepresentant(b);
-
-        CompactBoolFunc repr_a =
-            *func_manipulator.applyTransformation(a, trans_repr_a);
-        CompactBoolFunc repr_b =
-            *func_manipulator.applyTransformation(b, trans_repr_b);
+        CompactBoolFunc repr_a = getRepresentant(a);
+        CompactBoolFunc repr_b = getRepresentant(b);
 
         elapsed_microseconds =
             std::chrono::duration_cast<std::chrono::microseconds>(
                 std::chrono::steady_clock::now() - begin
             ).count();
 
-        if (repr_a == repr_b)
-            return {{trans_repr_a, trans_repr_b}};
-
-        return {};
+        return repr_a == repr_b;
     }
 
 
@@ -38,12 +30,12 @@ namespace LLS1::Util
         Implemenation of the FlipSwap algorithm for searching
         the representant of the NPN class of given function.
     */
-    NPNTransformation FlipSwap::getRepresentant(
+    CompactBoolFunc FlipSwap::getRepresentant(
         const CompactBoolFunc& function
     ) {
         
         CompactBoolFunc current = function;
-        NPNTransformation transformation{function.num_inputs};
+        // NPNTransformation transformation{function.num_inputs};
 
         bool improvement;
         int iter = 0;
@@ -53,15 +45,6 @@ namespace LLS1::Util
             improvement = false;
             CompactBoolFunc candidate;
 
-            candidate = ~current;
-            ++transformations;
-            if (candidate < current)
-            {
-                    improvement = true;
-                    current = candidate;
-                    (*(transformation.negation.end() - 1)).flip();
-            }
-
             for (int i = 0; i < function.num_inputs; ++i)
             {
                 candidate = func_manipulator.negateInput(current, i);
@@ -70,8 +53,17 @@ namespace LLS1::Util
                 {
                     improvement = true;
                     current = candidate;
-                    transformation.negation[i].flip();
+                    // transformation.negation[transformation.permutation[i]].flip();
                 }
+            }
+            
+            candidate = ~current;
+            ++transformations;
+            if (candidate < current)
+            {
+                    improvement = true;
+                    current = candidate;
+                    // transformation.negation.back().flip();
             }
 
             for (
@@ -91,20 +83,17 @@ namespace LLS1::Util
                     {
                         improvement = true;
                         current = candidate;
-                        int tmp = transformation.permutation[input];
-                        transformation.permutation[input] =
-                            transformation.permutation[swap_input];
-                        transformation.permutation[swap_input] = tmp;
+                        // transformation = transformation.swap(input, swap_input);
                     }
                 }
             }
         } while(improvement);
 
-        return transformation;
+        return current;
     }
 
 
-    std::optional<std::pair<NPNTransformation, NPNTransformation>> Sifting::equal(
+    bool Sifting::equal(
         const CompactBoolFunc& a, const CompactBoolFunc& b
     ) {
         if (a.num_inputs != b.num_inputs)
@@ -115,23 +104,15 @@ namespace LLS1::Util
         
         transformations = 0;
 
-        NPNTransformation trans_repr_a = getRepresentant(a);
-        NPNTransformation trans_repr_b = getRepresentant(b);
-
-        CompactBoolFunc repr_a =
-            *func_manipulator.applyTransformation(a, trans_repr_a);
-        CompactBoolFunc repr_b =
-            *func_manipulator.applyTransformation(b, trans_repr_b);
+        CompactBoolFunc repr_a = getRepresentant(a);
+        CompactBoolFunc repr_b = getRepresentant(b);
 
         elapsed_microseconds =
             std::chrono::duration_cast<std::chrono::microseconds>(
                 std::chrono::steady_clock::now() - begin
             ).count();
 
-        if (repr_a == repr_b)
-            return {{trans_repr_a, trans_repr_b}};
-
-        return {};
+        return repr_a == repr_b;
     }
 
 
@@ -139,7 +120,7 @@ namespace LLS1::Util
         Implemenation of the FlipSwap algorithm for searching
         the representant of the NPN class of given function.
     */
-    NPNTransformation Sifting::getRepresentant(
+    CompactBoolFunc Sifting::getRepresentant(
         const CompactBoolFunc& function
     ) {
         
@@ -150,7 +131,7 @@ namespace LLS1::Util
         int iter = 0;
 
         CompactBoolFunc best_candidate = function;
-        NPNTransformation best_transformation;
+        // NPNTransformation best_transformation;
         do
         {
             improvement = false;
@@ -158,7 +139,7 @@ namespace LLS1::Util
             for (int i = 0; i < function.num_inputs - 1; ++i)
             {
                 CompactBoolFunc best_candidate_local = best_candidate;
-                NPNTransformation best_transformation_local = best_transformation;
+                // NPNTransformation best_transformation_local = best_transformation;
                 for (int j = 0; j < 3; ++j)
                 {
                     if (j % 2 == 0)
@@ -170,8 +151,8 @@ namespace LLS1::Util
                         {
                             improvement = true;
                             best_candidate_local = candidate;
-                            best_transformation_local.negation[i] = 
-                                ~best_transformation_local.negation[i];
+                            //best_transformation_local.negation[i] = 
+                            //    ~best_transformation_local.negation[i];
                         }
                     } else {
                         CompactBoolFunc candidate =
@@ -181,37 +162,37 @@ namespace LLS1::Util
                         {
                             improvement = true;
                             best_candidate_local = candidate;
-                            best_transformation_local.negation[i + 1] = 
-                                ~best_transformation_local.negation[i + 1];
+                            //best_transformation_local.negation[i + 1] = 
+                            //    ~best_transformation_local.negation[i + 1];
                         }
                     }
                 }
                 
                 CompactBoolFunc candidate =
                     func_manipulator.swap(best_candidate, i, i + 1);
-                NPNTransformation trans_swapped = best_transformation.swap(i, i + 1);
-                trans_swapped.negation[i + 1] = true;
+                // NPNTransformation trans_swapped = best_transformation.swap(i, i + 1);
+                // trans_swapped.negation[i + 1] = true;
                 if (candidate < best_candidate_local)
                 {
                     improvement = true;
                     best_candidate_local = candidate;
-                    best_transformation_local = trans_swapped;
+                    // best_transformation_local = trans_swapped;
                 }
             }
         } while(improvement);
 
-        return transformation;
+        return best_candidate;
     }
 
 
-    std::optional<NPNTransformation> Exhaustive::equal(
+    bool Exhaustive::equal(
         const CompactBoolFunc& a, const CompactBoolFunc& b
     ) {
         if (a.num_inputs != b.num_inputs)
-            return {};
+            return false;
 
         if (a.operator==(b))
-            return {NPNTransformation{a.num_inputs}};
+            return true;
         
         std::chrono::steady_clock::time_point begin =
             std::chrono::steady_clock::now();
@@ -263,7 +244,7 @@ namespace LLS1::Util
                                 std::chrono::steady_clock::now() - begin
                             ).count();
 
-                        return {tranformation};
+                        return true;
                     }
                 }
             }
@@ -274,6 +255,6 @@ namespace LLS1::Util
                 std::chrono::steady_clock::now() - begin
             ).count();
 
-        return {};
+        return false;
     }
 } //  namespace LLS1::Util

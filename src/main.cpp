@@ -59,13 +59,12 @@ int main(int argc, char** argv)
 			LLS1::Types::CompactBoolFunc b = readCompactBoolFuncFrom(argv[2]);
 
 			LLS1::Util::Exhaustive checker{a.num_inputs};
-			std::optional<LLS1::Types::NPNTransformation> result = checker.equal(a, b);
+			bool result = checker.equal(a, b);
 
 			if (result)
 			{
 				LLS1::Util::CompactManipulator& f = checker.func_manipulator; 
 				std::cout << "NPN Equal" << std::endl;
-				std::cout << *result << std::endl;
 			} else {
 				std::cout << "Not NPN Equal" << std::endl;
 			}
@@ -79,27 +78,11 @@ int main(int argc, char** argv)
 			LLS1::Types::CompactBoolFunc b = readCompactBoolFuncFrom(argv[2]);
 
 			LLS1::Util::FlipSwap checker{a.num_inputs};
-			std::optional<
-				std::pair<
-					LLS1::Types::NPNTransformation,
-					LLS1::Types::NPNTransformation
-				>
-			> result = checker.equal(a, b);
+			bool result = checker.equal(a, b);
 
 			if (result)
 			{
-				LLS1::Util::CompactManipulator& f = checker.func_manipulator; 
-				LLS1::Types::CompactBoolFunc representant = *f.applyTransformation(
-					a,
-					result->first
-				);
 				std::cout << "NPN Equal" << std::endl;
-				std::cout << "A -> Representant:" << std::endl;
-				std::cout << result->first << std::endl;
-				std::cout << "B -> Representant:" << std::endl;
-				std::cout << result->second << std::endl;
-				std::cout << "Representant:" << std::endl;
-				std::cout << representant << std::endl;
 			} else {
 				std::cout << "Not NPN Equal" << std::endl;
 			}
