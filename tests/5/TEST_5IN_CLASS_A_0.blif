@@ -4,8 +4,7 @@
 .inputs a b c d e
 .outputs Y
 .names a b c d e Y
-00100 1
-11110 1
+10110 1
+11111 1
 10111 1
-01101 1
 .end

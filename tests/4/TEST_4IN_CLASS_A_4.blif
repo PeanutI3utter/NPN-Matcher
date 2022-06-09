@@ -3,8 +3,6 @@
 .model TEST_4IN_CLASS_A_4
 .inputs a b c d
 .outputs Y
-.names a c b d Y
-0000 1
-1000 1
-0100 1
+.names c b a d Y
+0111 1
 .end

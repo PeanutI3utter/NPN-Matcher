@@ -1,0 +1,15 @@
+# Auto generated BLIF FILE
+# 0 0 0 0 1 1 0
+.model TEST_6IN_CLASS_A_5
+.inputs a b c d e f
+.outputs Y
+.names a f b d c e Y
+101011 1
+110100 1
+111111 1
+010001 1
+010010 1
+111010 1
+011101 1
+000000 1
+.end
